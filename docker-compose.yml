@@ -1,0 +1,37 @@
+services:
+  app:
+    image: adegaapi:latest
+    container_name: adegatech-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    working_dir: /usr/src/api
+    volumes:
+      - /usr/src/api/node_modules
+    env_file:
+      - .env
+    command: sh -c "pnpm install && pnpm start:prod"
+    networks:
+      - crm
+    depends_on:
+      - db
+
+  db:
+    container_name: adegatech-db
+    image: postgres:16
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: adegatech_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./database/data:/var/lib/postgresql/data
+    networks:
+      - crm
+
+networks:
+  crm:
+    driver: bridge
