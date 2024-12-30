@@ -1,0 +1,197 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String      @id @default(uuid())
+  name       String
+  email      String      @unique
+  password   String
+  role       Role        @default(ATTENDANT)
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  adegaId    String
+  adega      Adega       @relation(fields: [adegaId], references: [id])
+  actionLogs ActionLog[]
+  Order      Order[]
+
+  @@index([adegaId])
+  @@index([role])
+  @@map("users")
+}
+
+enum Role {
+  OWNER
+  ATTENDANT
+}
+
+model Adega {
+  id        String   @id @default(uuid())
+  name      String
+  address   String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users    User[]
+  products Product[]
+  orders   Order[]
+  reports  Report[]
+
+  @@index([name])
+  @@map("adegas")
+}
+
+model Product {
+  id           String         @id @default(uuid())
+  name         String
+  description  String?
+  price        Float
+  stock        Int            @default(0)
+  category     String
+  imageUrl     String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  adegaId      String
+  adega        Adega          @relation(fields: [adegaId], references: [id])
+  inventory    Inventory?
+  stockHistory StockHistory[]
+  OrderItem    OrderItem[]
+
+  @@index([adegaId])
+  @@index([category])
+  @@map("products")
+}
+
+model Inventory {
+  id        String   @id @default(uuid())
+  productId String   @unique
+  product   Product  @relation(fields: [productId], references: [id])
+  quantity  Int
+  updatedAt DateTime @updatedAt
+
+  @@index([productId])
+  @@map("inventory")
+}
+
+model Order {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  total     Float
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  adegaId   String
+  adega     Adega       @relation(fields: [adegaId], references: [id])
+
+  items   OrderItem[]
+  payment Payment?
+
+  @@index([adegaId])
+  @@index([status])
+  @@index([adegaId, status])
+  @@map("orders")
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
+model OrderItem {
+  id        String  @id @default(uuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id])
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+  quantity  Int
+  price     Float
+
+  @@index([orderId])
+  @@index([productId])
+  @@map("order_items")
+}
+
+model StockHistory {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
+  change    Int
+  reason    String
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@index([createdAt])
+  @@map("stock_history")
+}
+
+model Report {
+  id       String     @id @default(uuid())
+  date     DateTime   @default(now())
+  type     ReportType
+  data     Json
+  filePath String
+  adegaId  String
+  adega    Adega      @relation(fields: [adegaId], references: [id])
+
+  @@index([adegaId])
+  @@index([type, date])
+  @@map("reports")
+}
+
+enum ReportType {
+  DAILY
+  WEEKLY
+  MONTHLY
+  FINANCIAL
+  INVENTORY
+  SALES
+  CUSTOM
+}
+
+model Payment {
+  id            String        @id @default(uuid())
+  orderId       String        @unique
+  order         Order         @relation(fields: [orderId], references: [id])
+  method        PaymentMethod
+  status        PaymentStatus
+  amount        Float
+  transactionId String?
+  createdAt     DateTime      @default(now())
+
+  @@index([orderId])
+  @@index([method])
+  @@index([status])
+  @@map("payments")
+}
+
+enum PaymentMethod {
+  CASH
+  PIX
+  CARD
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+model ActionLog {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  details   Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("action_logs")
+}
