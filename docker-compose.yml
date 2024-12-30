@@ -22,8 +22,8 @@ services:
     container_name: adegatech-db
     image: postgres:16
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: adegatech
+      POSTGRES_PASSWORD: adegatechapi
       POSTGRES_DB: adegatech_db
     ports:
       - "5432:5432"
