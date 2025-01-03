@@ -32,39 +32,61 @@ enum Role {
 }
 
 model Adega {
-  id        String   @id @default(uuid())
-  name      String
-  address   String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  name         String   @unique
+  city         String
+  neighborhood String
+  zipCode      String
+  state        String   @db.VarChar(2)
+  phone        String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  users    User[]
-  products Product[]
-  orders   Order[]
-  reports  Report[]
+  users      User[]
+  products   Product[]
+  orders     Order[]
+  reports    Report[]
+  categories Category[]
 
   @@index([name])
   @@map("adegas")
 }
 
+model Category {
+  id        String   @id @default(uuid())
+  adegaId   String   @map("adega_id")
+  name      String   @unique
+  icon      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  adega    Adega     @relation(fields: [adegaId], references: [id])
+  products Product[]
+
+  @@map("categories")
+}
+
 model Product {
-  id           String         @id @default(uuid())
-  name         String
-  description  String?
-  price        Float
-  stock        Int            @default(0)
-  category     String
-  imageUrl     String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  adegaId      String
-  adega        Adega          @relation(fields: [adegaId], references: [id])
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float
+  stock       Int      @default(0)
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  adegaId     String
+  categoryId  String?
+
+  adega    Adega     @relation(fields: [adegaId], references: [id])
+  category Category? @relation(fields: [categoryId], references: [id])
+
   inventory    Inventory?
   stockHistory StockHistory[]
   OrderItem    OrderItem[]
 
   @@index([adegaId])
-  @@index([category])
+  @@index([categoryId])
   @@map("products")
 }
 

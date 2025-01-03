@@ -101,20 +101,29 @@ Stack: ${error.stack}
       return;
     }
 
-    this.saveErrorLog(exception, {
-      method: request.method,
-      url: request.url,
-    });
+    if (exception instanceof HttpException) {
+      const response = exception.getResponse();
+      const status =
+        exception instanceof HttpException ? exception.getStatus() : 500;
 
-    const response = ctx.getResponse();
-    const status =
-      exception instanceof HttpException ? exception.getStatus() : 500;
+      if (Array.isArray(response['message'])) {
+        this.logger.error(
+          'Erros de validação encontrados:',
+          JSON.stringify(response['message']),
+        );
+      }
 
-    response.status(status).json({
-      statusCode: status,
-      timestamp: new Date().toISOString(),
-      path: request.url,
-      message: exception.message || 'Internal server error',
-    });
+      this.saveErrorLog(exception, {
+        method: request.method,
+        url: request.url,
+      });
+
+      ctx.getResponse().status(status).json({
+        statusCode: status,
+        timestamp: new Date().toISOString(),
+        path: request.url,
+        message: response['message'],
+      });
+    }
   }
 }
