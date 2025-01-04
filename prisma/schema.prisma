@@ -17,7 +17,7 @@ model User {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   adegaId    String
-  adega      Adega       @relation(fields: [adegaId], references: [id])
+  adega      Adega       @relation(fields: [adegaId], references: [id], onDelete: Cascade)
   actionLogs ActionLog[]
   Order      Order[]
 
@@ -60,7 +60,7 @@ model Category {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  adega    Adega     @relation(fields: [adegaId], references: [id])
+  adega    Adega     @relation(fields: [adegaId], references: [id], onDelete: Cascade)
   products Product[]
 
   @@map("categories")
@@ -78,8 +78,8 @@ model Product {
   adegaId     String
   categoryId  String?
 
-  adega    Adega     @relation(fields: [adegaId], references: [id])
-  category Category? @relation(fields: [categoryId], references: [id])
+  adega    Adega     @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   inventory    Inventory?
   stockHistory StockHistory[]
@@ -93,7 +93,7 @@ model Product {
 model Inventory {
   id        String   @id @default(uuid())
   productId String   @unique
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
   updatedAt DateTime @updatedAt
 
@@ -104,13 +104,13 @@ model Inventory {
 model Order {
   id        String      @id @default(uuid())
   userId    String
-  user      User        @relation(fields: [userId], references: [id])
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   total     Float
   status    OrderStatus @default(PENDING)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   adegaId   String
-  adega     Adega       @relation(fields: [adegaId], references: [id])
+  adega     Adega       @relation(fields: [adegaId], references: [id], onDelete: Cascade)
 
   items   OrderItem[]
   payment Payment?
@@ -130,9 +130,9 @@ enum OrderStatus {
 model OrderItem {
   id        String  @id @default(uuid())
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
   price     Float
 
@@ -144,7 +144,7 @@ model OrderItem {
 model StockHistory {
   id        String   @id @default(uuid())
   productId String
-  product   Product  @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   change    Int
   reason    String
   createdAt DateTime @default(now())
@@ -161,7 +161,7 @@ model Report {
   data     Json
   filePath String
   adegaId  String
-  adega    Adega      @relation(fields: [adegaId], references: [id])
+  adega    Adega      @relation(fields: [adegaId], references: [id], onDelete: Cascade)
 
   @@index([adegaId])
   @@index([type, date])
@@ -181,7 +181,7 @@ enum ReportType {
 model Payment {
   id            String        @id @default(uuid())
   orderId       String        @unique
-  order         Order         @relation(fields: [orderId], references: [id])
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
   method        PaymentMethod
   status        PaymentStatus
   amount        Float
@@ -209,7 +209,7 @@ enum PaymentStatus {
 model ActionLog {
   id        String   @id @default(uuid())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   action    String
   details   Json?
   createdAt DateTime @default(now())
