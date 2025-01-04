@@ -54,8 +54,8 @@ model Adega {
 
 model Category {
   id        String   @id @default(uuid())
-  adegaId   String   @map("adega_id")
-  name      String   @unique
+  adegaId   String
+  name      String
   icon      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -63,6 +63,7 @@ model Category {
   adega    Adega     @relation(fields: [adegaId], references: [id], onDelete: Cascade)
   products Product[]
 
+  @@unique([adegaId, name])
   @@map("categories")
 }
 

@@ -9,14 +9,14 @@ import { UsersRepository } from 'src/shared/database/repositories/users.reposito
 @Injectable()
 export class AdministrativeService {
   constructor(
-    private readonly UsersRepository: UsersRepository,
+    private readonly usersRepository: UsersRepository,
     private jwtService: JwtService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
     const { adega, email, name, password, role } = createUserDto;
 
-    const existingRecord = await this.UsersRepository.findFirst(
+    const existingRecord = await this.usersRepository.findFirst(
       email,
       adega.name,
     );
@@ -27,7 +27,7 @@ export class AdministrativeService {
 
     const hashedPassword = await hash(password, 12);
 
-    const userWithAdega = await this.UsersRepository.create({
+    const userWithAdega = await this.usersRepository.create({
       email,
       name,
       password: hashedPassword,
@@ -46,13 +46,14 @@ export class AdministrativeService {
 
     const acessToken = await this.jwtService.signAsync({
       sub: userWithAdega.id,
+      adega: userWithAdega.adegaId,
     });
 
     return { acessToken };
   }
 
   async getUserById(id: string) {
-    return this.UsersRepository.findUnique({
+    return this.usersRepository.findUnique({
       where: { id },
       select: {
         id: true,
