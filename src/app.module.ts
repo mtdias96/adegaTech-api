@@ -4,10 +4,9 @@ import { AdministrativeModule } from './modules/administrative/administrative.mo
 import { AuthGuard } from './modules/auth/auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { DatabaseModule } from './shared/database/database.module';
-import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
-  imports: [AdministrativeModule, DatabaseModule, AuthModule, CategoriesModule],
+  imports: [AdministrativeModule, DatabaseModule, AuthModule],
   providers: [
     {
       provide: APP_GUARD,
