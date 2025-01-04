@@ -37,6 +37,7 @@ export class AuthGuard implements CanActivate {
       });
 
       request['userId'] = payload.sub;
+      request['adegaId'] = payload.adega;
     } catch {
       throw new UnauthorizedException();
     }

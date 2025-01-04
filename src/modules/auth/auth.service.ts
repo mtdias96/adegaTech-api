@@ -30,6 +30,7 @@ export class AuthService {
 
     const acessToken = await this.jwtService.signAsync({
       sub: user.id,
+      adega: user.adegaId,
     });
 
     return { acessToken };
