@@ -2,12 +2,16 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { CreateUserDto } from './dto/create-administrative.dto';
 
+import { JwtService } from '@nestjs/jwt';
 import { hash } from 'bcryptjs';
 import { UsersRepository } from 'src/shared/database/repositories/users.repositories';
 
 @Injectable()
 export class AdministrativeService {
-  constructor(private readonly UsersRepository: UsersRepository) {}
+  constructor(
+    private readonly UsersRepository: UsersRepository,
+    private jwtService: JwtService,
+  ) {}
 
   async create(createUserDto: CreateUserDto) {
     const { adega, email, name, password, role } = createUserDto;
@@ -40,6 +44,21 @@ export class AdministrativeService {
       },
     });
 
-    return userWithAdega;
+    const acessToken = await this.jwtService.signAsync({
+      sub: userWithAdega.id,
+    });
+
+    return { acessToken };
+  }
+
+  async getUserById(id: string) {
+    return this.UsersRepository.findUnique({
+      where: { id },
+      select: {
+        id: true,
+        email: true,
+        adegaId: true,
+      },
+    });
   }
 }
