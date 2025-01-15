@@ -18,4 +18,8 @@ export class CategoriesRepository {
   findMany(findOneDto: Prisma.CategoryWhereInput) {
     return this.prismaService.category.findMany({ where: findOneDto });
   }
+
+  findProductsByIdCategory(findProductsDto: Prisma.ProductFindManyArgs) {
+    return this.prismaService.product.findMany(findProductsDto);
+  }
 }
