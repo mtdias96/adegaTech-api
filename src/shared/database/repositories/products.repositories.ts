@@ -15,7 +15,11 @@ export class ProductsRepository {
     return this.prismaService.product.findFirst({ where: findOneDto });
   }
 
-  findMany(findOneDto: Prisma.ProductWhereInput) {
-    return this.prismaService.product.findMany({ where: findOneDto });
+  findMany(findManyDto: Prisma.ProductWhereInput) {
+    return this.prismaService.product.findMany({ where: findManyDto });
+  }
+
+  deleteOne(deleteDto: Prisma.ProductDeleteArgs['where']) {
+    return this.prismaService.product.delete({ where: deleteDto });
   }
 }
