@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { CategoriesRepository } from 'src/shared/database/repositories/categories.repositories';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { ListProductByCategoryDto } from './dto/list-product-category.dto';
 
 @Injectable()
 export class CategoriesService {
@@ -33,8 +34,24 @@ export class CategoriesService {
     return categoryAdega;
   }
 
-  findAllByAdegaId(adegaId: string) {
+  async findAllByAdegaId(adegaId: string) {
     //Colocar validações
-    return this.categoriesRepository.findMany({ adegaId });
+    return await this.categoriesRepository.findMany({ adegaId });
+  }
+
+  async listProductsByCategory(
+    adegaId: string,
+    listProductByCategoryDto: ListProductByCategoryDto,
+  ) {
+    const { categoryId } = listProductByCategoryDto;
+
+    const productsByIdCategory =
+      await this.categoriesRepository.findProductsByIdCategory({
+        where: {
+          categoryId: categoryId,
+          adegaId: adegaId,
+        },
+      });
+    return productsByIdCategory;
   }
 }
