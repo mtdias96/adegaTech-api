@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -23,5 +24,10 @@ export class ProductsController {
   ) {
     createProductDto.imageUrl = file.path.replace(/\\/g, '/');
     return this.productsService.create(adegaId, createProductDto);
+  }
+
+  @Get()
+  async listAll(@ActiveAdegaId() adegaId: string) {
+    return this.productsService.findAllByAdegaId(adegaId);
   }
 }
