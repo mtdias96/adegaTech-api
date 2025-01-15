@@ -14,4 +14,8 @@ export class ProductsRepository {
   findOne(findOneDto: Prisma.ProductWhereInput) {
     return this.prismaService.product.findFirst({ where: findOneDto });
   }
+
+  findMany(findOneDto: Prisma.ProductWhereInput) {
+    return this.prismaService.product.findMany({ where: findOneDto });
+  }
 }
