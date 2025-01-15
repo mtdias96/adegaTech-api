@@ -14,7 +14,7 @@ export class CreateProductDto {
   name: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @Type(() => Number)
@@ -35,4 +35,6 @@ export class CreateProductDto {
   @IsOptional()
   @IsUrl()
   imageUrl: string;
+
+  image: File;
 }
