@@ -41,4 +41,9 @@ export class ProductsService {
 
     return productAdega;
   }
+
+  async findAllByAdegaId(adegaId: string) {
+    //Colocar validações
+    return await this.productsRepository.findMany({ adegaId });
+  }
 }
