@@ -13,7 +13,7 @@ model User {
   name       String
   email      String      @unique
   password   String
-  role       Role        @default(ATTENDANT)
+  role       Role        @default(OWNER)
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   adegaId    String

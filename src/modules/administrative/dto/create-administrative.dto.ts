@@ -1,9 +1,7 @@
-import { Role } from '@prisma/client';
 import { Type } from 'class-transformer';
 
 import {
   IsEmail,
-  IsEnum,
   IsNotEmpty,
   IsString,
   MinLength,
@@ -50,9 +48,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(8)
   password: string;
-
-  @IsEnum(Role)
-  role: Role;
 
   @ValidateNested()
   @Type(() => CreateAdegaDto) // Diz ao class-validator que o campo é um objeto de CreateAdegaDto
