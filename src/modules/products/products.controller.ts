@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   UploadedFile,
   UseInterceptors,
@@ -29,5 +31,11 @@ export class ProductsController {
   @Get()
   async listAll(@ActiveAdegaId() adegaId: string) {
     return this.productsService.findAllByAdegaId(adegaId);
+  }
+
+  @Delete('/:id')
+  async deleteProductId(@Param() productId: string) {
+    const product = productId['id'];
+    return this.productsService.deleteProductId(product);
   }
 }
