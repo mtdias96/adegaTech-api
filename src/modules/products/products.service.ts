@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { ProductsRepository } from 'src/shared/database/repositories/products.repositories';
 import { CreateProductDto } from './dto/create-product.dto';
 
@@ -45,5 +49,17 @@ export class ProductsService {
   async findAllByAdegaId(adegaId: string) {
     //Colocar validações
     return await this.productsRepository.findMany({ adegaId });
+  }
+
+  async deleteProductId(productId: string) {
+    const existingProduct = await this.productsRepository.findOne({
+      id: productId,
+    });
+
+    if (!existingProduct) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return await this.productsRepository.deleteOne({ id: productId });
   }
 }
