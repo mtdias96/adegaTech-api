@@ -14,7 +14,7 @@ export class AdministrativeService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    const { adega, email, name, password, role } = createUserDto;
+    const { adega, email, name, password } = createUserDto;
 
     const existingRecord = await this.usersRepository.findFirst(
       email,
@@ -31,7 +31,6 @@ export class AdministrativeService {
       email,
       name,
       password: hashedPassword,
-      role,
       adega: {
         create: {
           name: adega.name,
