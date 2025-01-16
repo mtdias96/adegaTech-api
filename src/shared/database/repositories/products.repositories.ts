@@ -19,6 +19,10 @@ export class ProductsRepository {
     return this.prismaService.product.findMany({ where: findManyDto });
   }
 
+  findSearch(findSearchDto: Prisma.ProductFindManyArgs) {
+    return this.prismaService.product.findMany(findSearchDto);
+  }
+
   updateOne(
     productId: string,
     updateProductDto: Prisma.ProductUpdateInput,
