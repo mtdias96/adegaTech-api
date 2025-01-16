@@ -79,4 +79,29 @@ export class ProductsService {
 
     return await this.productsRepository.deleteOne({ id: productId });
   }
+
+  async search(searchDto: { search: string }, adegaId: string) {
+    try {
+      const searchWords = searchDto.search.split(' ').filter(Boolean);
+
+      const productSearch = await this.productsRepository.findSearch({
+        where: {
+          adegaId,
+          AND: searchWords.map((word) => ({
+            name: {
+              contains: word,
+              mode: 'insensitive',
+            },
+          })),
+        },
+        orderBy: {
+          name: 'asc',
+        },
+      });
+
+      return productSearch;
+    } catch {
+      throw new BadRequestException('Erro ao buscar produtos');
+    }
+  }
 }
