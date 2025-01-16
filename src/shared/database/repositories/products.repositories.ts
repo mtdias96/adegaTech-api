@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { type Prisma } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
 
 import { PrismaService } from '../prisma.service';
 
@@ -17,6 +17,24 @@ export class ProductsRepository {
 
   findMany(findManyDto: Prisma.ProductWhereInput) {
     return this.prismaService.product.findMany({ where: findManyDto });
+  }
+
+  updateOne(
+    productId: string,
+    updateProductDto: Prisma.ProductUpdateInput,
+  ): Promise<Product> {
+    console.log(updateProductDto, productId);
+    const { price, stock, ...updateData } = updateProductDto;
+
+    const data = {
+      ...updateData,
+      price: Number(price),
+      stock: Number(stock),
+    };
+    return this.prismaService.product.update({
+      where: { id: productId },
+      data: data,
+    });
   }
 
   deleteOne(deleteDto: Prisma.ProductDeleteArgs['where']) {
