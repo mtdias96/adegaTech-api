@@ -1,19 +1,28 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
+  Put,
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ActiveAdegaId } from 'src/shared/decorator/ActiveAdegaId';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product';
 import { ProductsService } from './products.service';
 
-@Controller('products')
+@Controller('product')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
+
+  @Get()
+  async listAll(@ActiveAdegaId() adegaId: string) {
+    return this.productsService.findAllByAdegaId(adegaId);
+  }
 
   @Post('create')
   @UseInterceptors(FileInterceptor('image'))
@@ -22,12 +31,32 @@ export class ProductsController {
     @Body() createProductDto: CreateProductDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    createProductDto.imageUrl = file.path.replace(/\\/g, '/');
+    if (file) {
+      createProductDto.imageUrl = file.path.replace(/\\/g, '/');
+    } else {
+      createProductDto.imageUrl = 'uploads/default-featured-image.png';
+    }
     return this.productsService.create(adegaId, createProductDto);
   }
 
-  @Get()
-  async listAll(@ActiveAdegaId() adegaId: string) {
-    return this.productsService.findAllByAdegaId(adegaId);
+  @Put('/edit/:id')
+  @UseInterceptors(FileInterceptor('image'))
+  async update(
+    @Param() productId: string,
+    @Body() updateProductDto: UpdateProductDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (file) {
+      updateProductDto.imageUrl = file.path.replace(/\\/g, '/');
+    }
+
+    const product = productId['id'];
+    return this.productsService.update(product, updateProductDto);
+  }
+
+  @Delete('/:id')
+  async deleteProductId(@Param() productId: string) {
+    const product = productId['id'];
+    return this.productsService.deleteProductId(product);
   }
 }
