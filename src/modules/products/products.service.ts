@@ -3,8 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Product } from '@prisma/client';
 import { ProductsRepository } from 'src/shared/database/repositories/products.repositories';
 import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product';
 
 @Injectable()
 export class ProductsService {
@@ -49,6 +51,21 @@ export class ProductsService {
   async findAllByAdegaId(adegaId: string) {
     //Colocar validações
     return await this.productsRepository.findMany({ adegaId });
+  }
+
+  async update(
+    productId: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    const existingProduct = await this.productsRepository.findOne({
+      id: productId,
+    });
+
+    if (!existingProduct) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return await this.productsRepository.updateOne(productId, updateProductDto);
   }
 
   async deleteProductId(productId: string) {
