@@ -6,5 +6,9 @@
     "source.removeUnusedImports": "always",
     "source.organizeImports": "always"
   },
-  "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "workbench.colorCustomizations": {
+    "titleBar.activeBackground": "#28a745",
+    "titleBar.activeForeground": "#ffffff"
+  }
 }
