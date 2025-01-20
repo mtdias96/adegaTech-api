@@ -11,12 +11,30 @@ export class ProductsRepository {
     return this.prismaService.product.create({ data: createDto });
   }
 
+  createStock(createDto: Prisma.StockCreateInput) {
+    return this.prismaService.stock.create({ data: createDto });
+  }
+
   findOne(findOneDto: Prisma.ProductWhereInput) {
     return this.prismaService.product.findFirst({ where: findOneDto });
   }
 
   findMany(findManyDto: Prisma.ProductWhereInput) {
-    return this.prismaService.product.findMany({ where: findManyDto });
+    return this.prismaService.product.findMany({
+      where: findManyDto,
+      include: {
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        stock: {
+          select: {
+            quantity: true,
+          },
+        },
+      },
+    });
   }
 
   findSearch(findSearchDto: Prisma.ProductFindManyArgs) {
@@ -27,17 +45,9 @@ export class ProductsRepository {
     productId: string,
     updateProductDto: Prisma.ProductUpdateInput,
   ): Promise<Product> {
-    console.log(updateProductDto, productId);
-    const { price, stock, ...updateData } = updateProductDto;
-
-    const data = {
-      ...updateData,
-      price: Number(price),
-      stock: Number(stock),
-    };
     return this.prismaService.product.update({
       where: { id: productId },
-      data: data,
+      data: updateProductDto,
     });
   }
 
