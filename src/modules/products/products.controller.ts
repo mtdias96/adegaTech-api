@@ -1,4 +1,5 @@
 import {
+  BadGatewayException,
   Body,
   Controller,
   Delete,
@@ -23,11 +24,15 @@ export class ProductsController {
   async listAll(@ActiveAdegaId() adegaId: string) {
     return this.productsService.findAllByAdegaId(adegaId);
   }
+
   @Get('/search/:search')
   async searchProduct(
     @Param('search') search: string,
     @ActiveAdegaId() adegaId: string,
   ) {
+    if (search.length === 0) {
+      throw new BadGatewayException('Erro ao pesquisar');
+    }
     return this.productsService.search({ search }, adegaId);
   }
 
