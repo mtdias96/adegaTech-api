@@ -72,7 +72,6 @@ model Product {
   name        String
   description String?
   price       Float
-  stock       Int      @default(0)
   imageUrl    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -82,36 +81,51 @@ model Product {
   adega    Adega     @relation(fields: [adegaId], references: [id], onDelete: Cascade)
   category Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
-  inventory    Inventory?
   stockHistory StockHistory[]
   OrderItem    OrderItem[]
+  stock        Stock?
 
   @@index([adegaId])
   @@index([categoryId])
   @@map("products")
 }
 
-model Inventory {
+model Stock {
   id        String   @id @default(uuid())
   productId String   @unique
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
   updatedAt DateTime @updatedAt
 
+  product Product @relation(fields: [productId], references: [id])
+
   @@index([productId])
-  @@map("inventory")
+  @@map("stocks")
+}
+
+model StockHistory {
+  id        String   @id @default(uuid())
+  productId String
+  quantity  Int
+  type      String // "increment" ou "decrement"
+  createdAt DateTime @default(now())
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@index([productId])
+  @@map("stock_history")
 }
 
 model Order {
   id        String      @id @default(uuid())
   userId    String
-  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   total     Float
   status    OrderStatus @default(PENDING)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   adegaId   String
-  adega     Adega       @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  adega Adega @relation(fields: [adegaId], references: [id], onDelete: Cascade)
 
   items   OrderItem[]
   payment Payment?
@@ -140,19 +154,6 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
   @@map("order_items")
-}
-
-model StockHistory {
-  id        String   @id @default(uuid())
-  productId String
-  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-  change    Int
-  reason    String
-  createdAt DateTime @default(now())
-
-  @@index([productId])
-  @@index([createdAt])
-  @@map("stock_history")
 }
 
 model Report {
