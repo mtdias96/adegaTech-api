@@ -7,6 +7,7 @@ import { AuthGuard } from './modules/auth/auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { ProductsModule } from './modules/products/products.module';
+import { StockModule } from './modules/stock/stock.module';
 import { DatabaseModule } from './shared/database/database.module';
 
 @Module({
@@ -20,6 +21,7 @@ import { DatabaseModule } from './shared/database/database.module';
     AuthModule,
     CategoriesModule,
     ProductsModule,
+    StockModule,
   ],
   providers: [
     {
