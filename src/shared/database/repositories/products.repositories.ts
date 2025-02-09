@@ -19,9 +19,9 @@ export class ProductsRepository {
     return this.prismaService.product.findFirst({ where: findOneDto });
   }
 
-  findMany(findManyDto: Prisma.ProductWhereInput) {
+  findMany(findManyAdegaIdDto: Prisma.ProductWhereInput) {
     return this.prismaService.product.findMany({
-      where: findManyDto,
+      where: findManyAdegaIdDto,
       include: {
         category: {
           select: {
@@ -31,6 +31,7 @@ export class ProductsRepository {
         stock: {
           select: {
             quantity: true,
+            lowStock: true,
           },
         },
       },
