@@ -3,8 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Product } from '@prisma/client';
+import { Prisma, Product } from '@prisma/client';
 import { ProductsRepository } from 'src/shared/database/repositories/products.repositories';
+import { CatchDbErrors } from 'src/shared/decorator/CatchDBErrors';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product';
 
@@ -13,67 +14,85 @@ export class ProductsService {
   constructor(private readonly productsRepository: ProductsRepository) {}
 
   async create(adegaId: string, createProductDto: CreateProductDto) {
-    const {
-      name,
-      description,
-      price,
-      stock: quantity,
-      categoryId,
-      imageUrl,
-    } = createProductDto;
+    try {
+      const {
+        name,
+        description,
+        price,
+        stock,
+        lowStock,
+        categoryId,
+        imageUrl,
+      } = createProductDto;
 
-    const existingProduct = await this.productsRepository.findOne({
-      adegaId,
-      name,
-    });
+      const existingProduct = await this.productsRepository.findOne({
+        adegaId,
+        name,
+      });
 
-    if (existingProduct) {
-      throw new BadRequestException(
-        'The product already exists in this winery.',
-      );
+      if (existingProduct) {
+        throw new BadRequestException(
+          'The product already exists in this winery.',
+        );
+      }
+
+      const productAdega = await this.productsRepository.create({
+        name,
+        description,
+        price: Number(price),
+        imageUrl,
+        category: {
+          connect: {
+            id: categoryId,
+          },
+        },
+        adega: {
+          connect: {
+            id: adegaId,
+          },
+        },
+      });
+
+      const productStock = await this.productsRepository.createStock({
+        quantity: Number(stock),
+        lowStock: Number(lowStock),
+        adega: {
+          connect: {
+            id: adegaId,
+          },
+        },
+
+        product: {
+          connect: {
+            id: productAdega.id,
+          },
+        },
+      });
+
+      return { productAdega, productStock };
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Prisma error occurred:', error.code, error.meta);
+      }
     }
-
-    const productAdega = await this.productsRepository.create({
-      name,
-      description,
-      price: Number(price),
-      imageUrl,
-      category: {
-        connect: {
-          id: categoryId,
-        },
-      },
-      adega: {
-        connect: {
-          id: adegaId,
-        },
-      },
-    });
-
-    const productStock = await this.productsRepository.createStock({
-      quantity: Number(quantity),
-      product: {
-        connect: {
-          id: productAdega.id,
-        },
-      },
-    });
-
-    return { productAdega, productStock };
   }
-
+  //Pensar em nome melhor
   async findAllByAdegaId(adegaId: string) {
-    const adegaExists = await this.productsRepository.findOne({
-      adegaId,
-    });
+    try {
+      const adegaExists = await this.productsRepository.findOne({
+        adegaId,
+      });
 
-    if (!adegaExists) {
-      throw new Error('Adega não encontrada');
+      if (!adegaExists) {
+        throw new Error('Adega não encontrada');
+      }
+
+      return await this.productsRepository.findMany({
+        adegaId,
+      });
+    } catch (error) {
+      throw new BadRequestException('Erro ao buscar produtos', error);
     }
-
-    return await this.productsRepository.findMany({
-      adegaId,
-    });
   }
 
   async update(
@@ -104,18 +123,6 @@ export class ProductsService {
     return await this.productsRepository.updateOne(productId, data);
   }
 
-  async deleteProductId(productId: string) {
-    const existingProduct = await this.productsRepository.findOne({
-      id: productId,
-    });
-
-    if (!existingProduct) {
-      throw new NotFoundException('Product not found');
-    }
-
-    return await this.productsRepository.deleteOne({ id: productId });
-  }
-
   async search(searchDto: { search: string }, adegaId: string) {
     try {
       const searchWords = searchDto.search.split(' ').filter(Boolean);
@@ -139,5 +146,17 @@ export class ProductsService {
     } catch {
       throw new BadRequestException('Erro ao buscar produtos');
     }
+  }
+
+  @CatchDbErrors()
+  async deleteProductId(productId: string) {
+    const existingProduct = await this.productsRepository.findOne({
+      id: productId,
+    });
+    if (!existingProduct) {
+      throw new NotFoundException('Product not found');
+    }
+
+    return await this.productsRepository.deleteOne({ id: productId });
   }
 }
