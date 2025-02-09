@@ -17,72 +17,65 @@ model User {
   createdAt  DateTime    @default(now())
   updatedAt  DateTime    @updatedAt
   adegaId    String
-  adega      Adega       @relation(fields: [adegaId], references: [id], onDelete: Cascade)
   actionLogs ActionLog[]
   Order      Order[]
+  adega      Adega       @relation(fields: [adegaId], references: [id], onDelete: Cascade)
 
   @@index([adegaId])
   @@index([role])
   @@map("users")
 }
 
-enum Role {
-  OWNER
-  ATTENDANT
-}
-
 model Adega {
-  id           String   @id @default(uuid())
-  name         String   @unique
+  id           String         @id @default(uuid())
+  name         String         @unique
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   city         String
   neighborhood String
-  zipCode      String
-  state        String   @db.VarChar(2)
   phone        String
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  users      User[]
-  products   Product[]
-  orders     Order[]
-  reports    Report[]
-  categories Category[]
+  state        String         @db.VarChar(2)
+  zipCode      String
+  categories   Category[]
+  orders       Order[]
+  products     Product[]
+  reports      Report[]
+  StockHistory StockHistory[]
+  Stock        Stock[]
+  users        User[]
 
   @@index([name])
   @@map("adegas")
 }
 
 model Category {
-  id        String   @id @default(uuid())
-  adegaId   String
+  id        String    @id @default(uuid())
   name      String
   icon      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  adega    Adega     @relation(fields: [adegaId], references: [id], onDelete: Cascade)
-  products Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  adegaId   String
+  adega     Adega     @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+  products  Product[]
 
   @@unique([adegaId, name])
   @@map("categories")
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  price       Float
-  imageUrl    String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  adegaId     String
-  categoryId  String?
-
-  adega    Adega     @relation(fields: [adegaId], references: [id], onDelete: Cascade)
-  category Category? @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-
-  stockHistory StockHistory[]
+  id           String         @id @default(uuid())
+  name         String
+  description  String?
+  price        Float
+  imageUrl     String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  adegaId      String
+  categoryId   String?
   OrderItem    OrderItem[]
+  adega        Adega          @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+  category     Category?      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  stockHistory StockHistory[]
   stock        Stock?
 
   @@index([adegaId])
@@ -95,21 +88,25 @@ model Stock {
   productId String   @unique
   quantity  Int
   updatedAt DateTime @updatedAt
-
-  product Product @relation(fields: [productId], references: [id])
+  lowStock  Int      @default(0) @map("low_stock")
+  adegaId   String
+  adega     Adega    @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
   @@map("stocks")
 }
 
 model StockHistory {
-  id        String   @id @default(uuid())
+  id        String          @id @default(uuid())
   productId String
+  createdAt DateTime        @default(now())
   quantity  Int
-  type      String // "increment" ou "decrement"
-  createdAt DateTime @default(now())
-
-  product Product @relation(fields: [productId], references: [id])
+  reason    String?
+  type      StockChangeType
+  adegaId   String
+  adega     Adega           @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+  product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
   @@map("stock_history")
@@ -123,12 +120,10 @@ model Order {
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   adegaId   String
-
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
-  adega Adega @relation(fields: [adegaId], references: [id], onDelete: Cascade)
-
-  items   OrderItem[]
-  payment Payment?
+  items     OrderItem[]
+  adega     Adega       @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment   Payment?
 
   @@index([adegaId])
   @@index([status])
@@ -136,20 +131,14 @@ model Order {
   @@map("orders")
 }
 
-enum OrderStatus {
-  PENDING
-  COMPLETED
-  CANCELLED
-}
-
 model OrderItem {
   id        String  @id @default(uuid())
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
   productId String
-  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   quantity  Int
   price     Float
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([orderId])
   @@index([productId])
@@ -170,6 +159,50 @@ model Report {
   @@map("reports")
 }
 
+model Payment {
+  id            String        @id @default(uuid())
+  orderId       String        @unique
+  method        PaymentMethod
+  status        PaymentStatus
+  amount        Float
+  transactionId String?
+  createdAt     DateTime      @default(now())
+  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([method])
+  @@index([status])
+  @@map("payments")
+}
+
+model ActionLog {
+  id        String   @id @default(uuid())
+  userId    String
+  action    String
+  details   Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("action_logs")
+}
+
+enum Role {
+  OWNER
+  ATTENDANT
+}
+
+enum StockChangeType {
+  INCREMENT
+  DECREMENT
+}
+
+enum OrderStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+}
+
 enum ReportType {
   DAILY
   WEEKLY
@@ -178,22 +211,6 @@ enum ReportType {
   INVENTORY
   SALES
   CUSTOM
-}
-
-model Payment {
-  id            String        @id @default(uuid())
-  orderId       String        @unique
-  order         Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  method        PaymentMethod
-  status        PaymentStatus
-  amount        Float
-  transactionId String?
-  createdAt     DateTime      @default(now())
-
-  @@index([orderId])
-  @@index([method])
-  @@index([status])
-  @@map("payments")
 }
 
 enum PaymentMethod {
@@ -206,16 +223,4 @@ enum PaymentStatus {
   PENDING
   SUCCESS
   FAILED
-}
-
-model ActionLog {
-  id        String   @id @default(uuid())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  action    String
-  details   Json?
-  createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@map("action_logs")
 }
