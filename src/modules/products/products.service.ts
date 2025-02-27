@@ -140,6 +140,13 @@ export class ProductsService {
         orderBy: {
           name: 'asc',
         },
+        select: {
+          stock: true,
+          category: true,
+          price: true,
+          imageUrl: true,
+          name: true,
+        },
       });
 
       return productSearch;

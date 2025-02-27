@@ -9,6 +9,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { ProductsModule } from './modules/products/products.module';
 import { StockModule } from './modules/stock/stock.module';
 import { DatabaseModule } from './shared/database/database.module';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { DatabaseModule } from './shared/database/database.module';
     CategoriesModule,
     ProductsModule,
     StockModule,
+    OrdersModule,
   ],
   providers: [
     {
