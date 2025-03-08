@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { StocksRepository } from 'src/shared/database/repositories/stock.repositories';
 
 @Injectable()
@@ -9,21 +13,16 @@ export class StockService {
     try {
       const stockProduct = await this.stocksRepository.findMany(adegaId);
       return { stockProduct };
-    } catch (e) {
-      console.log(e);
+    } catch {
+      throw new NotFoundException();
     }
   }
-
-  //Cada
 
   async findLowStock(adegaId: string) {
     try {
       const stockProduct = await this.stocksRepository.findMany(adegaId);
       const lowStockProducts = stockProduct
         .filter((stock) => {
-          console.log(
-            `Checking stock: Quantity=${stock.quantity}, LowStock=${stock.lowStock}`,
-          );
           return Number(stock.quantity) <= Number(stock.lowStock);
         })
         .map((stock) => ({
@@ -39,11 +38,11 @@ export class StockService {
           adegaId: stock.adegaId,
         }));
 
-      console.log(lowStockProducts);
       return lowStockProducts;
-    } catch (error) {
-      console.error('Erro ao buscar estoques baixos:', error);
-      throw new Error('Não foi possível buscar os estoques baixos.');
+    } catch {
+      throw new BadRequestException(
+        'Não foi possível buscar os estoques baixos.',
+      );
     }
   }
 }

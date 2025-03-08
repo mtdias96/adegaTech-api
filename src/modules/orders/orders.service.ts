@@ -9,6 +9,7 @@ import { OrdersRepository } from 'src/shared/database/repositories/orders.reposi
 import { StocksRepository } from 'src/shared/database/repositories/stock.repositories';
 import { Payment } from 'src/utils/Payment';
 import { ItemsDto } from './dto/create-order.dto';
+import { OrdersGateway } from './orders.gateway';
 
 @Injectable()
 export class OrdersService {
@@ -16,6 +17,7 @@ export class OrdersService {
     private readonly ordersRepository: OrdersRepository,
     private readonly stockRepository: StocksRepository,
     private readonly prismaService: PrismaService,
+    private readonly ordersGateway: OrdersGateway,
   ) {}
 
   async create(createOrderDto: ItemsDto, adegaId: string, userId: string) {
@@ -74,22 +76,24 @@ export class OrdersService {
     try {
       await this.prismaService.$transaction(
         async (trx: PrismaClient) => {
-          const { id } = await this.ordersRepository.createOrder(
-            orderData,
-            trx,
-          );
+          const order = await this.ordersRepository.createOrder(orderData, trx);
 
           const { success, status } = await Payment();
 
           if (!success) {
-            await this.ordersRepository.updateOrder(id, status, trx);
+            await this.ordersRepository.updateOrder(order.id, status, trx);
             throw new BadRequestException(
               'Erro ao efetuar pagamento pagamento',
             );
           }
 
-          await this.ordersRepository.updateOrder(id, status, trx);
+          await this.ordersRepository.updateOrder(order.id, status, trx);
           await this.stockRepository.updateStockAfterSale(items, trx);
+
+          this.ordersGateway.notifyNewOrder(order);
+
+          const stockData = { updatedStock: items, adegaId };
+          this.ordersGateway.notifyStockUpdate(stockData);
 
           return { message: 'Pagamento efetuado com sucesso' };
         },
