@@ -27,15 +27,16 @@ model User {
 }
 
 model Adega {
-  id           String         @id @default(uuid())
-  name         String         @unique
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
-  city         String
-  neighborhood String
-  phone        String
-  state        String         @db.VarChar(2)
-  zipCode      String
+  id                String   @id @default(uuid())
+  name              String   @unique
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  city              String
+  neighborhood      String
+  phone             String
+  state             String   @db.VarChar(2)
+  zipCode           String
+
   categories   Category[]
   orders       Order[]
   products     Product[]
@@ -43,6 +44,7 @@ model Adega {
   StockHistory StockHistory[]
   Stock        Stock[]
   users        User[]
+  financialRecord FinancialRecord[]
 
   @@index([name])
   @@map("adegas")
@@ -94,6 +96,7 @@ model Stock {
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
+  @@index([adegaId, quantity])
   @@map("stocks")
 }
 
@@ -109,6 +112,8 @@ model StockHistory {
   product   Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@index([productId])
+  @@index([createdAt])
+  @@index([adegaId, type])
   @@map("stock_history")
 }
 
@@ -128,6 +133,8 @@ model Order {
   @@index([adegaId])
   @@index([status])
   @@index([adegaId, status])
+  @@index([createdAt])
+  @@index([userId, createdAt])
   @@map("orders")
 }
 
@@ -173,6 +180,20 @@ model Payment {
   @@index([method])
   @@index([status])
   @@map("payments")
+}
+
+model FinancialRecord {
+  id         String   @id @default(uuid())
+  date       DateTime
+  totalSales Float
+  adegaId    String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  adega Adega @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+
+  @@unique([adegaId, date])
+  @@map("financial_records")
 }
 
 model ActionLog {
