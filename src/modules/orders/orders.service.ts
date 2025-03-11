@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { PrismaService } from 'src/shared/database/prisma.service';
+import { FinancialRepository } from 'src/shared/database/repositories/financial.repositories';
 import { OrdersRepository } from 'src/shared/database/repositories/orders.repositories';
 import { StocksRepository } from 'src/shared/database/repositories/stock.repositories';
 import { Payment } from 'src/utils/Payment';
@@ -18,11 +19,14 @@ export class OrdersService {
     private readonly stockRepository: StocksRepository,
     private readonly prismaService: PrismaService,
     private readonly ordersGateway: OrdersGateway,
+    private readonly financialRepository: FinancialRepository,
   ) {}
 
+  //Adicionar campo de paymnet
   async create(createOrderDto: ItemsDto, adegaId: string, userId: string) {
     const { items } = createOrderDto;
     const productIds = items.map((item) => item.productId);
+    const dateWithTime = new Date().toISOString();
 
     const productStockData = await this.ordersRepository.findStockByProducts(
       adegaId,
@@ -42,9 +46,12 @@ export class OrdersService {
 
     for (const item of items) {
       const stockAvailable = stockByProduct.get(item.productId) || 0;
+
       if (stockAvailable < item.quantity) {
+        const { name } = await this.ordersRepository.findName(item.productId);
+
         throw new BadRequestException(
-          `Estoque insuficiente para o produto ID ${item.productId}`,
+          `Estoque insuficiente para o produto: ${name} | Stock atual: ${stockAvailable} `,
         );
       }
     }
@@ -91,6 +98,17 @@ export class OrdersService {
           await this.stockRepository.updateStockAfterSale(items, trx);
 
           this.ordersGateway.notifyNewOrder(order);
+
+          await this.financialRepository.createFinancialTransition(
+            {
+              date: dateWithTime,
+              totalSales: totalPrice,
+              adega: {
+                connect: { id: adegaId },
+              },
+            },
+            trx,
+          );
 
           const stockData = { updatedStock: items, adegaId };
           this.ordersGateway.notifyStockUpdate(stockData);
