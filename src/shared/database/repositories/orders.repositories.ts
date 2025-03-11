@@ -27,6 +27,17 @@ export class OrdersRepository {
     return this.prismaService.order.findFirst({ where: findOneDto });
   }
 
+  findName(id: string) {
+    return this.prismaService.product.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        name: true,
+      },
+    });
+  }
+
   findStockByProducts(adegaId: string, productIds: string[]) {
     return this.prismaService.stock.findMany({
       where: {
@@ -39,6 +50,7 @@ export class OrdersRepository {
         product: {
           select: {
             price: true,
+            name: true,
           },
         },
       },
