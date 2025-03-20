@@ -45,6 +45,9 @@ model Adega {
   Stock        Stock[]
   users        User[]
   financialRecord FinancialRecord[]
+  productSales ProductSalesSummary[]
+  storeSalesSummary StoreSalesSummary?
+
 
   @@index([name])
   @@map("adegas")
@@ -79,6 +82,7 @@ model Product {
   category     Category?      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   stockHistory StockHistory[]
   stock        Stock?
+  productSales ProductSalesSummary[]
 
   @@index([adegaId])
   @@index([categoryId])
@@ -119,6 +123,7 @@ model StockHistory {
 
 model Order {
   id        String      @id @default(uuid())
+  reg        Int      @default(autoincrement())
   userId    String
   total     Float
   status    OrderStatus @default(PENDING)
@@ -150,6 +155,29 @@ model OrderItem {
   @@index([orderId])
   @@index([productId])
   @@map("order_items")
+}
+
+model StoreSalesSummary {
+  id      String   @id @default(uuid())
+  adegaId String
+  total   Int      @default(0)
+  adega   Adega   @relation(fields: [adegaId], references: [id])
+
+  @@unique([adegaId])
+  @@map("store_sales_summary")
+}
+
+model ProductSalesSummary {
+  id        String   @id @default(uuid())
+  adegaId   String
+  productId String
+  totalSold Int      @default(0)
+
+  adega     Adega      @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([adegaId, productId])
+  @@map("product_sales_summary")
 }
 
 model Report {
