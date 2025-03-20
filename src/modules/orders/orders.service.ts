@@ -27,6 +27,7 @@ export class OrdersService {
     const { items } = createOrderDto;
     const productIds = items.map((item) => item.productId);
     const dateWithTime = new Date().toISOString();
+    const stockData = { updatedStock: items, adegaId };
 
     const productStockData = await this.ordersRepository.findStockByProducts(
       adegaId,
@@ -60,6 +61,13 @@ export class OrdersService {
       const price = pricePerProduct.get(item.productId);
       return total + price * item.quantity;
     }, 0);
+
+    const totalSaleOrder = items.reduce(
+      (total, item) => total + item.quantity,
+      0,
+    );
+
+    console.log(totalSaleOrder);
 
     const orderData = {
       total: totalPrice,
@@ -96,9 +104,11 @@ export class OrdersService {
 
           await this.ordersRepository.updateOrder(order.id, status, trx);
           await this.stockRepository.updateStockAfterSale(items, trx);
-
-          this.ordersGateway.notifyNewOrder(order);
-
+          await this.ordersRepository.updateAllSales(
+            adegaId,
+            totalSaleOrder,
+            trx,
+          );
           await this.financialRepository.createFinancialTransition(
             {
               date: dateWithTime,
@@ -110,7 +120,7 @@ export class OrdersService {
             trx,
           );
 
-          const stockData = { updatedStock: items, adegaId };
+          this.ordersGateway.notifyNewOrder(order);
           this.ordersGateway.notifyStockUpdate(stockData);
 
           return { message: 'Pagamento efetuado com sucesso' };

@@ -27,6 +27,12 @@ export class OrdersRepository {
     return this.prismaService.order.findFirst({ where: findOneDto });
   }
 
+  async findTotalOrders(adegaId: string) {
+    return this.prismaService.order.count({
+      where: { adegaId },
+    });
+  }
+
   findName(id: string) {
     return this.prismaService.product.findUnique({
       where: {
@@ -53,6 +59,19 @@ export class OrdersRepository {
             name: true,
           },
         },
+      },
+    });
+  }
+
+  updateAllSales(adegaId: string, quantity: number, trx: PrismaClient) {
+    return trx.storeSalesSummary.upsert({
+      where: {
+        adegaId: adegaId,
+      },
+      update: { total: { increment: quantity } },
+      create: {
+        adegaId: adegaId,
+        total: quantity,
       },
     });
   }
