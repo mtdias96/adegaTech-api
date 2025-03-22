@@ -6,13 +6,12 @@ import { AdministrativeModule } from './modules/administrative/administrative.mo
 import { AuthGuard } from './modules/auth/auth.guard';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
-import { LatestOrdersModule } from './modules/latest-orders/latest-orders.module';
+import { FinancialModule } from './modules/finantial/financial.module';
 import { OrdersModule } from './modules/orders/orders.module';
 import { ProductsModule } from './modules/products/products.module';
 import { SalesModule } from './modules/sales/sales.module';
 import { StockModule } from './modules/stock/stock.module';
 import { DatabaseModule } from './shared/database/database.module';
-import { FinancialModule } from './modules/finantial/financial.module';
 
 @Module({
   imports: [
@@ -28,7 +27,6 @@ import { FinancialModule } from './modules/finantial/financial.module';
     StockModule,
     OrdersModule,
     FinancialModule,
-    LatestOrdersModule,
     SalesModule,
   ],
   providers: [
