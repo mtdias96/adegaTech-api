@@ -99,7 +99,7 @@ export class ProductsService {
     productId: string,
     updateProductDto: UpdateProductDto,
   ): Promise<Product> {
-    const { price, name, imageUrl, image, categoryId, description, id } =
+    const { price, name, image, categoryId, description, id, imageUrl } =
       updateProductDto;
 
     const existingProduct = await this.productsRepository.findOne({
