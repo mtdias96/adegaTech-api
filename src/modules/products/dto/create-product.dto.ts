@@ -4,7 +4,6 @@ import {
   IsNumber,
   IsOptional,
   IsString,
-  IsUrl,
   Min,
 } from 'class-validator';
 
@@ -39,9 +38,5 @@ export class CreateProductDto {
   @Min(0, { message: 'lowStock must not be less than 0' })
   lowStock: number;
 
-  @IsOptional()
-  @IsUrl()
   imageUrl: string;
-
-  image: File;
 }

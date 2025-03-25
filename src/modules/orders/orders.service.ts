@@ -134,4 +134,10 @@ export class OrdersService {
       throw new BadRequestException('Erro ao criar pedido');
     }
   }
+
+  async findAll(adegaId: string) {
+    const data = await this.ordersRepository.findAllOrders(adegaId);
+
+    return { data };
+  }
 }

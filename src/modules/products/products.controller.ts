@@ -41,13 +41,7 @@ export class ProductsController {
   async create(
     @ActiveAdegaId() adegaId: string,
     @Body() createProductDto: CreateProductDto,
-    @UploadedFile() file: Express.Multer.File,
   ) {
-    if (file) {
-      createProductDto.imageUrl = file.path.replace(/\\/g, '/');
-    } else {
-      createProductDto.imageUrl = 'uploads/default-featured-image.png';
-    }
     return this.productsService.create(adegaId, createProductDto);
   }
 

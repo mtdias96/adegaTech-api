@@ -10,4 +10,14 @@ export class SalesController {
   findAll(@ActiveAdegaId() adegaId: string) {
     return this.salesService.findAll(adegaId);
   }
+
+  @Get('sales-category')
+  findSalesCategory(@ActiveAdegaId() adegaId: string) {
+    return this.salesService.findSalesCategory(adegaId);
+  }
+
+  @Get('best-seller')
+  findBestSellingProducts(@ActiveAdegaId() adegaId: string) {
+    return this.salesService.findBestSellingProducts(adegaId);
+  }
 }
