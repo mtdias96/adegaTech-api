@@ -5,10 +5,14 @@ class Env {
   @IsString()
   @IsNotEmpty()
   jwtScret: string;
+  BUCKET_NAME: string;
+  AWS_REGION: string;
 }
 
 export const env: Env = plainToInstance(Env, {
   jwtScret: process.env.JWT_SECRET,
+  bucketName: process.env.BUCKET_NAME,
+  awsRegion: process.env.AWS_REGION,
 });
 
 const errors = validateSync(env);
