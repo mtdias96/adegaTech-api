@@ -15,4 +15,9 @@ export class SalesController {
   findSalesCategory(@ActiveAdegaId() adegaId: string) {
     return this.salesService.findSalesCategory(adegaId);
   }
+
+  @Get('best-seller')
+  findBestSellingProducts(@ActiveAdegaId() adegaId: string) {
+    return this.salesService.findBestSellingProducts(adegaId);
+  }
 }

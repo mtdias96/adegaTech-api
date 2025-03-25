@@ -22,4 +22,11 @@ export class UsersRepository {
   findUnique(findUniqueDto: Prisma.UserFindUniqueArgs) {
     return this.prismaService.user.findUnique(findUniqueDto);
   }
+
+  findAdegaName(adegaId: string) {
+    return this.prismaService.adega.findUnique({
+      where: { id: adegaId },
+      select: { name: true },
+    });
+  }
 }

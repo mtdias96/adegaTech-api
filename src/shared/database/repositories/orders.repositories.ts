@@ -91,7 +91,10 @@ export class OrdersRepository {
             price: true,
             product: {
               select: {
+                id: true,
                 name: true,
+                imageUrl: true,
+                price: true,
               },
             },
           },
