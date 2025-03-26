@@ -11,7 +11,6 @@ import { OrdersModule } from './modules/orders/orders.module';
 import { ProductsModule } from './modules/products/products.module';
 import { SalesModule } from './modules/sales/sales.module';
 import { StockModule } from './modules/stock/stock.module';
-import { S3Service } from './shared/aws/S3.service';
 import { DatabaseModule } from './shared/database/database.module';
 
 @Module({
@@ -34,7 +33,6 @@ import { DatabaseModule } from './shared/database/database.module';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
-    S3Service,
   ],
 })
 export class AppModule {}

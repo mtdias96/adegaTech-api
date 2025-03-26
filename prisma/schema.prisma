@@ -4,8 +4,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -27,27 +28,26 @@ model User {
 }
 
 model Adega {
-  id                String   @id @default(uuid())
-  name              String   @unique
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  city              String
-  neighborhood      String
-  phone             String
-  state             String   @db.VarChar(2)
-  zipCode           String
+  id           String   @id @default(uuid())
+  name         String   @unique
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  city         String
+  neighborhood String
+  phone        String
+  state        String   @db.VarChar(2)
+  zipCode      String
 
-  categories   Category[]
-  orders       Order[]
-  products     Product[]
-  reports      Report[]
-  StockHistory StockHistory[]
-  Stock        Stock[]
-  users        User[]
-  financialRecord FinancialRecord[]
-  productSales ProductSalesSummary[]
+  categories        Category[]
+  orders            Order[]
+  products          Product[]
+  reports           Report[]
+  StockHistory      StockHistory[]
+  Stock             Stock[]
+  users             User[]
+  financialRecord   FinancialRecord[]
+  productSales      ProductSalesSummary[]
   storeSalesSummary StoreSalesSummary?
-
 
   @@index([name])
   @@map("adegas")
@@ -68,18 +68,18 @@ model Category {
 }
 
 model Product {
-  id           String         @id @default(uuid())
+  id           String                @id @default(uuid())
   name         String
   description  String?
   price        Float
   imageUrl     String?
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
   adegaId      String
   categoryId   String?
   OrderItem    OrderItem[]
-  adega        Adega          @relation(fields: [adegaId], references: [id], onDelete: Cascade)
-  category     Category?      @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  adega        Adega                 @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+  category     Category?             @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   stockHistory StockHistory[]
   stock        Stock?
   productSales ProductSalesSummary[]
@@ -123,7 +123,7 @@ model StockHistory {
 
 model Order {
   id        String      @id @default(uuid())
-  reg        Int      @default(autoincrement())
+  reg       Int         @default(autoincrement())
   userId    String
   total     Float
   status    OrderStatus @default(PENDING)
@@ -158,23 +158,23 @@ model OrderItem {
 }
 
 model StoreSalesSummary {
-  id      String   @id @default(uuid())
+  id      String @id @default(uuid())
   adegaId String
-  total   Int      @default(0)
-  adega   Adega   @relation(fields: [adegaId], references: [id])
+  total   Int    @default(0)
+  adega   Adega  @relation(fields: [adegaId], references: [id])
 
   @@unique([adegaId])
   @@map("store_sales_summary")
 }
 
 model ProductSalesSummary {
-  id        String   @id @default(uuid())
+  id        String @id @default(uuid())
   adegaId   String
   productId String
-  totalSold Int      @default(0)
+  totalSold Int    @default(0)
 
-  adega     Adega      @relation(fields: [adegaId], references: [id], onDelete: Cascade)
-  product   Product    @relation(fields: [productId], references: [id], onDelete: Cascade)
+  adega   Adega   @relation(fields: [adegaId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@unique([adegaId, productId])
   @@map("product_sales_summary")
