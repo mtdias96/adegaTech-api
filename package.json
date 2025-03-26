@@ -11,7 +11,6 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "prepare": "[ -z \"$VERCEL\" ] && husky install || echo \"Skipping husky install on Vercel\"",
     "ci:lint": "prettier --check src",
     "ci:typecheck": "tsc --noEmit",
     "vercel-build": "prisma generate && npm run build",
