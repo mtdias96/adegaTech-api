@@ -6,12 +6,12 @@
       "use": "@vercel/node"
     }
   ],
-
-  "buildCommand": "prisma generate && prisma migrate deploy && npm run build",
+  "buildCommand": "npm run vercel-build",
+  "outputDirectory": "dist",
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "src/main.ts"
+      "dest": "dist/src/main.js"
     }
   ]
 }
