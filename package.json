@@ -11,10 +11,11 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "prepare": "husky install",
+    "prepare": "[ -z \"$VERCEL\" ] && husky install || echo \"Skipping husky install on Vercel\"",
     "ci:lint": "prettier --check src",
     "ci:typecheck": "tsc --noEmit",
-    "vercel-build": "prisma generate && prisma migrate deploy && npm run build"
+    "vercel-build": "prisma generate && npm run build",
+   "start:vercel": "node dist/main"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.772.0",

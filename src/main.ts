@@ -16,25 +16,26 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
-  app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalFilters(new GlobalExceptionFilter());
+  app.useGlobalFilters(
+    new HttpExceptionFilter(),
+    new GlobalExceptionFilter(),
+    new AllExceptionsFilter(),
+  );
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new AllExceptionsFilter());
 
-  if (process.env.NODE_ENV !== 'production') {
-    await app.listen(process.env.PORT || 3000);
-  } else {
-    await app.init();
-  }
-
-  return app.getHttpAdapter().getInstance();
+  return app;
 }
 
-export const handler = serverless(async (req, res) => {
-  const server = await bootstrap();
-  return server(req, res);
-});
+export default async function handler(req, res) {
+  const app = await bootstrap();
+  const server = app.getHttpAdapter().getInstance();
+
+  const serverlessHandler = serverless(server);
+  return serverlessHandler(req, res);
+}
 
 if (process.env.NODE_ENV !== 'production') {
-  bootstrap();
+  bootstrap().then(async (app) => {
+    await app.listen(process.env.PORT || 3000);
+  });
 }
