@@ -7,14 +7,14 @@
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
-    "start": "nest start",
+    "start": "node -r tsconfig-paths/register dist/main",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
+    "start:prod": "node -r tsconfig-paths/register dist/main",
     "ci:lint": "prettier --check src",
     "ci:typecheck": "tsc --noEmit",
-    "vercel-build": "prisma generate && npm run build",
-   "start:vercel": "node dist/main"
+    "vercel-build": "prisma generate && nest build && cp -r src/ dist/src/ && cp tsconfig.json dist/",
+    "start:vercel": "node -r tsconfig-paths/register dist/main"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.772.0",

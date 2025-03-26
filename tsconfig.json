@@ -16,6 +16,16 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "src/*": [
+        "src/*",
+        "dist/src/*"
+      ],
+      "@/*": [
+        "src/*",
+        "dist/src/*"
+      ]
+    }
   }
 }
