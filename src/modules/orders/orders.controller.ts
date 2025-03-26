@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ActiveAdegaId } from 'src/shared/decorator/ActiveAdegaId';
-import { ActiveUserId } from 'src/shared/decorator/ActiveUserId';
+import { ActiveAdegaId } from '../../shared/decorator/ActiveAdegaId';
+import { ActiveUserId } from '../../shared/decorator/ActiveUserId';
 import { ItemsDto } from './dto/create-order.dto';
 import { OrdersService } from './orders.service';
 

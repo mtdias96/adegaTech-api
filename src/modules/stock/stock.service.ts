@@ -3,7 +3,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { StocksRepository } from 'src/shared/database/repositories/stock.repositories';
+import { StocksRepository } from '../../shared/database/repositories/stock.repositories';
 
 @Injectable()
 export class StockService {

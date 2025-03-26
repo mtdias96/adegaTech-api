@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FinancialRecord } from '@prisma/client';
-import { FinancialRepository } from 'src/shared/database/repositories/financial.repositories';
-import { OrdersRepository } from 'src/shared/database/repositories/orders.repositories';
+import { FinancialRepository } from '../../shared/database/repositories/financial.repositories';
+import { OrdersRepository } from '../../shared/database/repositories/orders.repositories';
 
 @Injectable()
 export class FinancialService {

@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { ActiveAdegaId } from 'src/shared/decorator/ActiveAdegaId';
+import { ActiveAdegaId } from '../../shared/decorator/ActiveAdegaId';
 import { SalesService } from './sales.service';
 
 @Controller('sales')

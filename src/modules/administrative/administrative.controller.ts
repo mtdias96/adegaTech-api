@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ActiveUserId } from 'src/shared/decorator/ActiveUserId';
-import { IsPublic } from 'src/shared/decorator/IsPublic';
+import { ActiveUserId } from '../../shared/decorator/ActiveUserId';
+import { IsPublic } from '../../shared/decorator/IsPublic';
 import { AdministrativeService } from './administrative.service';
 import { CreateUserDto } from './dto/create-administrative.dto';
 

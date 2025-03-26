@@ -4,8 +4,8 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma, Product } from '@prisma/client';
-import { ProductsRepository } from 'src/shared/database/repositories/products.repositories';
-import { CatchDbErrors } from 'src/shared/decorator/CatchDBErrors';
+import { ProductsRepository } from '../../shared/database/repositories/products.repositories';
+import { CatchDbErrors } from '../../shared/decorator/CatchDBErrors';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product';
 

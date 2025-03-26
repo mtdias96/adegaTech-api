@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { FinancialRepository } from 'src/shared/database/repositories/financial.repositories';
-import { OrdersRepository } from 'src/shared/database/repositories/orders.repositories';
-import { SalesRepository } from 'src/shared/database/repositories/sales.repositories';
+import { FinancialRepository } from '../../shared/database/repositories/financial.repositories';
+import { OrdersRepository } from '../../shared/database/repositories/orders.repositories';
+import { SalesRepository } from '../../shared/database/repositories/sales.repositories';
 import { Order, OrderItem } from './dto/sales.dto';
 
 @Injectable()

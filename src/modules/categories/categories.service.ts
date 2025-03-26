@@ -1,5 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CategoriesRepository } from 'src/shared/database/repositories/categories.repositories';
+import { CategoriesRepository } from '../../shared/database/repositories/categories.repositories';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { ListProductByCategoryDto } from './dto/list-product-category.dto';
 

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { ActiveAdegaId } from 'src/shared/decorator/ActiveAdegaId';
+import { ActiveAdegaId } from '../../shared/decorator/ActiveAdegaId';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { ListProductByCategoryDto } from './dto/list-product-category.dto';
