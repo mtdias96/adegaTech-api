@@ -21,7 +21,12 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  await app.init();
+  if (process.env.NODE_ENV !== 'production') {
+    await app.listen(process.env.PORT || 3000);
+  } else {
+    await app.init();
+  }
+
   return app.getHttpAdapter().getInstance();
 }
 
@@ -29,3 +34,7 @@ export const handler = serverless(async (req, res) => {
   const server = await bootstrap();
   return server(req, res);
 });
+
+if (process.env.NODE_ENV !== 'production') {
+  bootstrap();
+}
