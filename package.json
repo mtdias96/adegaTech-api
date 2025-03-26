@@ -14,7 +14,7 @@
     "prepare": "husky install",
     "ci:lint": "prettier --check src",
     "ci:typecheck": "tsc --noEmit",
-    "ci:test": "echo jest"
+    "vercel-build": "prisma generate && prisma migrate deploy && pnpm run build"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.772.0",
