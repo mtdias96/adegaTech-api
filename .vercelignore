@@ -11,3 +11,6 @@ logs
 Dockerfile
 docker-compose.yml
 .husky
+uploads
+database
+vercel.build
