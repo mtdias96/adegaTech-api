@@ -6,15 +6,13 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "build": "nest build",
-    "start": "nest start",
+    "build": "npx prisma generate && npx prisma migrate deploy && nest build",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "start:prod": "node dist/main",
-    "prepare": "husky install",
+    "start:prod": "node -r tsconfig-paths/register dist/main",
     "ci:lint": "prettier --check src",
     "ci:typecheck": "tsc --noEmit",
-    "vercel-build": "prisma generate && prisma migrate deploy && npm run build"
+    "vercel-build": "npx prisma generate && npx prisma migrate deploy"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.772.0",

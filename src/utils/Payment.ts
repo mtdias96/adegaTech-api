@@ -14,7 +14,7 @@ export const Payment = (): Promise<{
           transactionId: randomUUID(),
           status: OrderStatus.COMPLETED,
         }),
-      5000,
+      1,
     );
   });
 };
@@ -32,7 +32,7 @@ export const PaymentError = (): Promise<{
           transactionId: randomUUID(),
           status: OrderStatus.CANCELLED,
         }),
-      8000,
+      1000,
     );
   });
 };

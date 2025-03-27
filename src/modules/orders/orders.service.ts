@@ -4,11 +4,11 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { PrismaService } from 'src/shared/database/prisma.service';
-import { FinancialRepository } from 'src/shared/database/repositories/financial.repositories';
-import { OrdersRepository } from 'src/shared/database/repositories/orders.repositories';
-import { StocksRepository } from 'src/shared/database/repositories/stock.repositories';
-import { Payment } from 'src/utils/Payment';
+import { PrismaService } from '../../shared/database/prisma.service';
+import { FinancialRepository } from '../../shared/database/repositories/financial.repositories';
+import { OrdersRepository } from '../../shared/database/repositories/orders.repositories';
+import { StocksRepository } from '../../shared/database/repositories/stock.repositories';
+import { Payment } from '../../utils/Payment';
 import { ItemsDto } from './dto/create-order.dto';
 import { OrdersGateway } from './orders.gateway';
 

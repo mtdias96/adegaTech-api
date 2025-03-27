@@ -1,11 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import 'dotenv/config';
-import * as serverless from 'serverless-http';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './shared/filters/all-exceptions.filter';
-import { GlobalExceptionFilter } from './shared/filters/global-exception.filter';
-import { HttpExceptionFilter } from './shared/filters/http-exception.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,25 +11,9 @@ async function bootstrap() {
     allowedHeaders: 'Content-Type, Accept, Authorization',
   });
 
-  app.useGlobalFilters(new HttpExceptionFilter());
-  app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalPipes(new ValidationPipe());
-  app.useGlobalFilters(new AllExceptionsFilter());
 
-  if (process.env.NODE_ENV !== 'production') {
-    await app.listen(process.env.PORT || 3000);
-  } else {
-    await app.init();
-  }
-
-  return app.getHttpAdapter().getInstance();
+  await app.listen(process.env.PORT || 3000);
 }
 
-export const handler = serverless(async (req, res) => {
-  const server = await bootstrap();
-  return server(req, res);
-});
-
-if (process.env.NODE_ENV !== 'production') {
-  bootstrap();
-}
+bootstrap();

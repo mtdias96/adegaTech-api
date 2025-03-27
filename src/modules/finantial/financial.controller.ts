@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { ActiveAdegaId } from 'src/shared/decorator/ActiveAdegaId';
+import { ActiveAdegaId } from '../../shared/decorator/ActiveAdegaId';
 import { FinancialResponseDto } from './dto/finantialDto';
 import { FinancialService } from './financial.service';
 

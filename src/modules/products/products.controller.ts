@@ -11,7 +11,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ActiveAdegaId } from 'src/shared/decorator/ActiveAdegaId';
+import { ActiveAdegaId } from '../../shared/decorator/ActiveAdegaId';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product';
 import { ProductsService } from './products.service';

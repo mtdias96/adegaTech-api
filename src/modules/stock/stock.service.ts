@@ -3,7 +3,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { StocksRepository } from 'src/shared/database/repositories/stock.repositories';
+import {
+  StocksRepository,
+  StockWithProduct,
+} from '../../shared/database/repositories/stock.repositories';
 
 @Injectable()
 export class StockService {
@@ -25,7 +28,7 @@ export class StockService {
         .filter((stock) => {
           return Number(stock.quantity) <= Number(stock.lowStock);
         })
-        .map((stock) => ({
+        .map((stock: StockWithProduct) => ({
           stockId: stock.id,
           productId: stock.product.id,
           name: stock.product.name,
