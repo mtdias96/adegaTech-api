@@ -1,6 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, Stock } from '@prisma/client';
 import { BaseService, PrismaService } from '../prisma.service';
+
+export type StockWithProduct = Stock & {
+  product: {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    imageUrl: string;
+  };
+  adega: {
+    categories: any[];
+  };
+};
 
 @Injectable()
 export class StocksRepository extends BaseService {
@@ -8,7 +21,7 @@ export class StocksRepository extends BaseService {
     super(prisma);
   }
 
-  async findMany(adegaId: string) {
+  async findMany(adegaId: string): Promise<StockWithProduct[]> {
     const options = this.addAdegaFilter(adegaId, {
       include: {
         product: true,

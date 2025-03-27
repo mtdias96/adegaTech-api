@@ -11,7 +11,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
 export class BaseService {
   constructor(protected readonly prisma: PrismaService) {}
 
-  protected addAdegaFilter<T extends { where?: any }>(
+  protected addAdegaFilter<T extends { where?: any; include?: any }>(
     adegaId: string,
     options: T,
   ): T {
