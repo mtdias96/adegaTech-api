@@ -12,10 +12,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node -r tsconfig-paths/register dist/main",
     "ci:lint": "prettier --check src",
-    "ci:typecheck": "tsc --noEmit",
-  "vercel-build": "prisma generate && nest build && mkdir -p dist/src/shared/database/repositories && cp -r src/ dist/ && cp tsconfig.json dist/",
-
-    "start:vercel": "node -r tsconfig-paths/register dist/main"
+    "ci:typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.772.0",

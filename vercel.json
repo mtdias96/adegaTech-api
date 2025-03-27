@@ -2,16 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/main.ts",
+      "src": "dist/main.js",
       "use": "@vercel/node"
     }
   ],
-  "buildCommand": "npm run vercel-build",
-  "outputDirectory": "dist",
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "dist/src/main.js"
+      "dest": "dist/main.js"
     }
   ]
 }
