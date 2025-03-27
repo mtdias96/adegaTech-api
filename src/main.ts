@@ -30,7 +30,7 @@ export default async function handler(req, res) {
   const app = await bootstrap();
   const server = app.getHttpAdapter().getInstance();
 
-  const serverlessHandler = serverless(server);
+  const serverlessHandler = serverless.default(server);
   return serverlessHandler(req, res);
 }
 
