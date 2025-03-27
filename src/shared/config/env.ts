@@ -7,12 +7,14 @@ class Env {
   jwtScret: string;
   BUCKET_NAME: string;
   AWS_REGION: string;
+  FRONT_URL: string;
 }
 
 export const env: Env = plainToInstance(Env, {
   jwtScret: process.env.JWT_SECRET,
   bucketName: process.env.BUCKET_NAME,
   awsRegion: process.env.AWS_REGION,
+  frontUrl: process.env.FRONT_URL!,
 });
 
 const errors = validateSync(env);

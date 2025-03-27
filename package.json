@@ -12,7 +12,7 @@
     "start:prod": "node dist/main",
     "ci:lint": "prettier --check src",
     "ci:typecheck": "tsc --noEmit",
-     "vercel-build": "npx prisma generate && nest build",
+     "vercel-build": "npx prisma generate",
      "postinstall": "prisma generate"
   },
   "dependencies": {
